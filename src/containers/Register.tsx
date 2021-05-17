@@ -1,125 +1,94 @@
-import axios from "axios";
-import React from "react";
-// import { useHistory } from "react-router";
-import { BrowserRouter, NavLink, Redirect, useHistory } from "react-router-dom";
-import Login from "./Login";
+import React, { SyntheticEvent } from "react";
+import { RouteComponentProps } from "react-router";
+import { Redirect } from "react-router-dom";
+import Column from "../components/Column";
+import LoadingWrapper from "../components/LoadingWrapper";
+import Row from "../components/Row";
+import TextBox from "../components/TextBox";
+import UserService from "../services/UserService";
+
+type RegisterProps = {
+  signinSuccess: (user: object) => void;
+  signinError: (error: string) => void;
+  showLoader: () => void;
+  hideLoader: () => void;
+  isAuthenticated: boolean;
+} & RouteComponentProps;
 
 type RegisterState = {
-    email: any;
-    name: any;
-    password: any;
-    confirmpassword: any;
-    redirect: boolean;
+  email: string;
+  password: string;
+  name: string;
+  errorMessage: string | null;
+  returnName: string;
 };
-class Register extends React.Component {
-    state: RegisterState = {
-        email: "",
-        name: "",
-        password: "",
-        confirmpassword: "",
-        redirect: false,
-    };
 
-    submitting = (e: any) => {
-        e.preventDefault();
+class Register extends React.Component<RegisterProps, RegisterState> {
+  state: RegisterState = {
+    email: "",
+    password: "",
+    name: "",
+    errorMessage: "",
+    returnName: "",
+  };
 
-        if (this.state.confirmpassword == this.state.password) {
-            const user = {
-                name: this.state.name,
-                email: this.state.email,
-                password: this.state.password,
-            };
-            axios.post("http://localhost:5000/auth/register", user).then(
-                (response) => console.log(response.status === 201)
-                // history.state("/login")
-            );
-            this.setState({ redirect: true });
-        }
-    };
-
-    redirecting = () => {
-        if (this.state.redirect) {
-            return <Redirect to="/login" />;
-        }
-    };
-
-    change = (event: any) => {
-        this.setState({ [event.target.name]: event.target.value });
-    };
-
-    render() {
-        return (
-            <div className="cards">
-            <div className="container register-form">
-                {this.redirecting()}
-                <div className="form">
-                    <div className="note">
-                        <h2 className="text-primary text-center mb-3">Registration Page</h2>
-                    </div>
-
-                    <div className="form-content">
-                        <form onSubmit={this.submitting}>
-                            <div className="row">
-                                <div className="col-md-6">
-                                    <div className="form-group m-3">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Your Name *"
-                                            name="name"
-                                            value={this.state.name}
-                                            onChange={this.change}
-                                        />
-                                    </div>
-                                    <div className="form-group m-3">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Email Id *"
-                                            name="email"
-                                            value={this.state.email}
-                                            onChange={this.change}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="form-group m-3">
-                                        <input
-                                            type="password"
-                                            className="form-control"
-                                            placeholder="Your Password *"
-                                            name="password"
-                                            value={this.state.password}
-                                            onChange={this.change}
-                                        />
-                                    </div>
-                                     <div className="form-group m-3">
-                                        <input
-                                            type="password"
-                                            className="form-control"
-                                            placeholder="Confirm Password *"
-                                            name="conformpassword"
-                                            value={this.state.confirmpassword}
-                                            onChange={this.change}
-                                        /> 
-
-                                         {this.state.confirmpassword ===
-                                            this.state.password ? null : (
-                                            <p>Password is not Matching</p>
-                                        )}
-                                     </div> 
-                                </div>
-                            </div>
-                            <div className="d-grid gap-2 col-6 mx-auto">
-                              <button className="btn btn-outline-primary btnSubmit m-3 fs-4">Register</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            </div>
-        );
+  register = async (e: SyntheticEvent) => {
+    try {
+      e.preventDefault();
+      console.log(e);
+      const { email, password, name } = this.state;
+      const { data } = await UserService.register(email, password, name);
+      console.log(data);
+      this.setState({ returnName: data.userName });
+    } catch (e) {
+      this.setState({ errorMessage: e.message });
     }
+  };
+  render() {
+    if (this.state.returnName) {
+      return <Redirect to={"/login"} />;
+    }
+
+    return (
+      <LoadingWrapper>
+        <Row>
+          <Column
+            size={4}
+            classes={
+              "offset-md-4 shadow-sm border p-4 text-center rounded mt-5"
+            }
+          >
+            <h2>Register</h2>
+            <hr />
+            <small className="text-danger">{this.state.errorMessage}</small>
+            <form onSubmit={this.register}>
+              <TextBox
+                placeholder={"Name"}
+                type={"text"}
+                textChange={(name) => this.setState({ name })}
+              />
+
+              <TextBox
+                placeholder={"Email"}
+                type={"email"}
+                textChange={(email) => this.setState({ email })}
+              />
+              <TextBox
+                placeholder={"Password"}
+                type={"password"}
+                textChange={(password) => this.setState({ password })}
+              />
+             
+
+              <button className={"btn btn-success w-100 text-uppercase"}>
+                Register
+              </button>
+            </form>
+          </Column>
+        </Row>
+      </LoadingWrapper>
+    );
+  }
 }
 
 export default Register;

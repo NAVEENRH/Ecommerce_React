@@ -43,10 +43,7 @@ export type UserSessionType = {
   error: string | null;
 };
 
-export type RegisterState = {
-  email: any;
-  name: any;
-  password: any;
-  confirmpassword: any;
-  redirect: boolean;
-};
+export type RegisterResponseType = {
+  userName: any;
+  userEmail: any;
+}

@@ -1,17 +1,18 @@
+import { AnyAaaaRecord } from 'dns';
 import { Action } from 'redux';
 
-import SerachAction from '../actions/SearchAction'
+import SearchAction from '../actions/SearchAction'
 
 type IAction = {
-    code: string;
+    searchField: any;
 } & Action
 
 function SearchReducer(store = '', action: IAction) {
     switch (action.type) {
-        case SerachAction.ActionTypes.SERACH_NAME:
-            return action.code
+        case SearchAction.ActionTypes.SEARCH_NAME:
+            return action.searchField
         default:
-            return store
+            return store;
     }
 }
 

@@ -27,3 +27,24 @@ body {
     font-size: calc(10px + 2vmin);
     color: white;
 }
+
+.App-link {
+    color: #61dafb;
+  }
+  
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .imgfallback {
+    width: 200px;
+    height: 200px;
+  }
+   .imgfall {
+     width: 100px;
+     height: 100px;
+   }

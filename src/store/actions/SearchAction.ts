@@ -1,12 +1,13 @@
 const ActionTypes = {
-    SERACH_NAME: '',
+    SEARCH_NAME: '',
 
 };
-const updateSerach = () => {
+const updateSearch = (searchField: any) => {
     return {
-        type: ActionTypes.SERACH_NAME
+        type: ActionTypes.SEARCH_NAME,
+        searchField,
     }
 }
 
 
-export default { updateSerach, ActionTypes }
+export default { updateSearch, ActionTypes }

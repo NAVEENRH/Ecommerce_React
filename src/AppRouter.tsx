@@ -14,6 +14,7 @@ import Checkout from "./containers/Checkout";
 import address from "./containers/address";
 import myorders from "./containers/myorders";
 import Payment from "./containers/Payment";
+import Home from "./containers/Home";
 
 const LazyProfile = React.lazy(() => import("./containers/Profile"));
 
@@ -23,7 +24,8 @@ const AppRouter: React.FC = (props) => {
       <Container fluid>
         <React.Suspense fallback={<div>Loading...</div>}>
           <Switch>
-            <Route path={"/"} component={Demo} exact />
+            {/* <Route path={"/"} component={Demo} exact /> */}
+            <Route path={"/"} component={Home} exact />
             <Route path={"/products"} component={ProductList} />
             <Route path={"/login"} component={Login} />
             <Route path={"/cart"} component={Cart} />
@@ -34,6 +36,8 @@ const AppRouter: React.FC = (props) => {
             <PrivateRoute path={"/checkout"} component={Checkout} />
             <PrivateRoute path={"/address"} component={address} />
             <PrivateRoute path={"/myorders"} component={myorders} />
+            <PrivateRoute path={"/myorders"} component={myorders} />
+
 
             {/* 404 Route */}
             <Route component={ErrorPage} />

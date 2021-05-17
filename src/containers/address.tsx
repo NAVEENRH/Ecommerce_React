@@ -22,7 +22,7 @@ class address extends React.Component {
         city: "",
         state: "",
         pincode: "",
-        redirect: true,
+        redirect: false,
     };
 
     submitting = (e: any) => {
@@ -40,14 +40,6 @@ class address extends React.Component {
                 headers: { Authorization: `Bearer ${token}` },
             })
         );
-
-        // StorageService.getData("token").then((token) =>)
-        // axios.post("http://localhost:5000/address", address)
-        
-        // .then(
-        //     (response) => console.log(response.status === 201)
-        // );
-        // this.setState({ redirect: true });
     }
 
     redirecting = () => {

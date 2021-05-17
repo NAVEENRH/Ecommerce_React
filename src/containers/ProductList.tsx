@@ -11,24 +11,63 @@ import CartActions from "../store/actions/CartActions";
 import Paginate from "../components/Paginate";
 import LoadingWrapper from "../components/LoadingWrapper";
 import LoadingActions from "../store/actions/LoadingActions";
+import "../App.css";
+import { AirbnbSlider, AirbnbThumbComponent } from "../components/Tooltip";
 
 type Props = {
   selectedCurrency: string;
   showLoader: () => void;
   hideLoader: () => void;
   addItem: (product: ProductType) => void;
+  search: string;
 } & RouteComponentProps;
-type State = { plist: ProductType[]; totalPages: number; pageNumber: number };
+type State = { 
+  plist: ProductType[]; 
+  totalPages: number; 
+  pageNumber: number;
+  value: any;
+  searchByTerm: string;
+  sortByName: string;
+  sortByPrice: string; };
 
 class ProductList extends React.Component<Props, State> {
-  state: State = { plist: [], totalPages: 0, pageNumber: 1 };
+  state: State = { plist: [], totalPages: 0, pageNumber: 1, value: [0, 100000],
+    searchByTerm: "",
+    sortByName: "",
+    sortByPrice: "", 
+  };
+
+
   componentDidMount() {
     this.getData();
   }
+
+  componentDidUpdate(prevProps: any, prevState: any) {
+    
+    if (this.props.search !== prevProps.search) {
+      this.getData();
+      this.setState({
+        searchByTerm: this.props.search,
+      });
+    }
+    if (
+      this.state.sortByName !== prevState.sortByName ||
+      this.state.sortByPrice !== prevState.sortByPrice
+    ) {
+      this.getData();
+    }
+  }
+
+
   async getData() {
     try {
       this.props.showLoader();
-      const { data } = await ProductService.getProducts(this.state.pageNumber);
+      const { data } = await ProductService.getProducts(this.state.pageNumber, this.state.value[0],
+        this.state.value[1],
+        this.state.searchByTerm,
+        this.state.sortByName,
+        this.state.sortByPrice
+        );
       this.setState({
         plist: data.data,
         totalPages: data.totalPages,
@@ -43,12 +82,84 @@ class ProductList extends React.Component<Props, State> {
   
   addToCart(product: ProductType) {
     this.props.addItem(product); // add to cart logic
-    this.props.history.push("/cart"); // redirect to cart page
+    // this.props.history.push("/cart"); // redirect to cart page
   }
   updateData = (page: number) =>
     this.setState({ pageNumber: page }, () => this.getData());
+
+    rangeSelector = (event: any, newValue: any) => {
+      this.setState({ value: newValue });
+    };
+
+    sort = (e: any) => {
+      switch (e.target.value) {
+        case "PriceLowToHigh":
+          return this.setState({
+            sortByPrice: "ASC",
+            sortByName: "productSalePrice",
+          });
+        case "PriceHighToLow":
+          return this.setState({
+            sortByPrice: "DESC",
+            sortByName: "productSalePrice",
+          });
+        case "NameLowToHigh":
+          return this.setState({
+            sortByPrice: "ASC",
+            sortByName: "productName",
+          });
+        case "NameHighToLow":
+          return this.setState({
+            sortByPrice: "DESC",
+            sortByName: "productName",
+          });
+        default:
+          return this.setState({
+            sortByName: "",
+            sortByPrice: "",
+          });
+      }
+    };
+
   render() {
     return (
+      <>
+      <div className="w-100 mt-5 ">
+        <Row>
+          <Column size={4} classes={"offset-md-2 text-center"}>
+            <AirbnbSlider
+              ThumbComponent={AirbnbThumbComponent}
+              getAriaLabel={(index) =>
+                index === 0 ? "Minimum price" : "Maximum price"
+              }
+              defaultValue={[20, 40]}
+              max={100000}
+              value={this.state.value}
+              onChange={this.rangeSelector}
+              valueLabelDisplay="auto"
+            />
+            <h5 className="text-success">
+              {this.state.value[0]}-{this.state.value[1]}
+            </h5>
+          </Column>
+          <Column size={4} classes={"offset-md-1"}>
+            <select
+              name="sort"
+              id="sort"
+              onChange={this.sort}
+              className="form-select selectpicker"
+              aria-label="Default select example"
+            >
+              <option value="" selected> sort
+              </option>
+              <option value="PriceLowToHigh">Low-High</option>
+              <option value="PriceHighToLow">High-Low</option>
+              <option value="NameLowToHigh">A-Z</option>
+              <option value="NameHighToLow">Z-A</option>
+            </select>
+          </Column>
+        </Row>
+      </div>
       <LoadingWrapper>
         <Row>
           {this.state.plist
@@ -72,6 +183,7 @@ class ProductList extends React.Component<Props, State> {
           </Column>
         </Row>
       </LoadingWrapper>
+      </>
     );
   }
 }
@@ -90,3 +202,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   };
 };
 export default connect(mapStoreToProps, mapDispatchToProps)(ProductList);
+
+
+
+

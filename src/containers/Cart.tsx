@@ -1,5 +1,5 @@
 import { IconButton } from "@material-ui/core";
-import { Component } from "react";
+import { Component, Dispatch } from "react";
 import { connect } from "react-redux";
 import { Link, NavLink, RouteComponentProps } from "react-router-dom";
 import Column from "../components/Column";
@@ -13,6 +13,8 @@ import "../index";
 
 type Props = {
   cart: CartType[];
+  incrementQuantity: () => void;
+  decrementQuantity: () => void;
 } & RouteComponentProps;
 
 type State = {
@@ -36,7 +38,7 @@ class Cart extends Component<Props, State> {
 
   decrement = () => {
     this.setState({
-      count: this.state.count - 1,
+      count: this.state.count -1,
     });
   };
 
@@ -92,7 +94,7 @@ class Cart extends Component<Props, State> {
                   >
                     -
                   </button>
-                  <h1>{this.state.count}</h1>
+                  <h3>{this.state.count}</h3>
                   <button
                     className="btn btn-danger m-2"
                     onClick={this.increment}
@@ -127,4 +129,5 @@ const mapStateToProps = (state: StoreType) => {
     cart: state.cart,
   };
 };
+
 export default connect(mapStateToProps)(Cart);
