@@ -13,7 +13,6 @@ const addToCart = (product: ProductType) => {
     product,
   };
 };
-
 const removeItem = (id: number) => {
   return {
     type: ActionTypes.REMOVE_ITEM,
@@ -21,7 +20,7 @@ const removeItem = (id: number) => {
   };
 };
 
-const incrementQty = (qtyId: number) => {
+const increaseQty = (qtyId: number) => {
   return {
     type: ActionTypes.INCREAMENT,
     qtyId,
@@ -33,4 +32,10 @@ const decrementQty = (id: number) => {
     id,
   }
 }
-export default { ActionTypes, addToCart, removeItem, incrementQty, decrementQty };
+export default {
+  ActionTypes,
+  addToCart,
+  removeItem,
+  increaseQty,
+  decrementQty
+};

@@ -16,7 +16,6 @@ class Demo extends React.Component<{}, State> {
     return (
       <div className="row">
         <Column size={12}>
-            <img src="https://images.pexels.com/photos/5632403/pexels-photo-5632403.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="" />
           <h1>Demo Component</h1>
           <p>Some html content</p>
           {this.state.count > 6 ? <p>Hello from {name.toUpperCase()}</p> : null}
@@ -41,6 +40,7 @@ class Demo extends React.Component<{}, State> {
           >
             Increment count
           </button>
+
         </Column>
       </div>
     );

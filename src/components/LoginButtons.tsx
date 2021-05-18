@@ -1,9 +1,12 @@
+import { Avatar } from "@material-ui/core";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import StorageService from "../services/StorageService";
 import UserActions from "../store/actions/UserActions";
 import { StoreType } from "../types";
+import CartButton from "./CartButton";
+
 
 const LoginButtons: React.FC = (props) => {
   // const store = useStore<StoreType>();
@@ -13,8 +16,9 @@ const LoginButtons: React.FC = (props) => {
   if (auth) {
     return (
       <>
+        <CartButton />
         <Link className="btn btn-link" to={"/profile"}>
-        <i className="fas fa-user-circle fa-lg"></i>
+          <Avatar src="/broken-image.jpg"  />
         </Link>
         <button
           className="btn btn-sm btn-outline-primary mx-2"

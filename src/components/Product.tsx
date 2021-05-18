@@ -5,6 +5,7 @@ import formatter from "../utils/formatter";
 import ImageWithFallback from "./ImageWithFallback";
 import ProductPrice from "./ProductPrice";
 
+
 type ProductProps = {
   pdata: ProductType;
   wishlist?: boolean;
@@ -27,38 +28,36 @@ class Product extends React.Component<ProductProps> {
       >
         <i className="fab fa-opencart"></i> Add to Cart
       </button>
+      
     );
   }
   render() {
     const { pdata, wishlist, currencyCode } = this.props;
     let finalPrice: any = pdata.productPrice;
     let finalSalePrice: any = pdata.productSalePrice;
-    
     return (
       <div className="p-4 shadow-sm text-center">
         <Link to={`/productdetail/${pdata.productId}`}>
-          <ImageWithFallback source={pdata.productImage}
-            classes={"w-100 h-100 img-thumbnail"} />
+          <ImageWithFallback classes={""} source={pdata.productImage} />
         </Link>
         <h5 className={"mt-4"}>{formatter.titlecase(pdata.productName)}</h5>
         <ProductPrice
-           {...(currencyCode === "EUR"
-           ? ((finalPrice = JSON.parse(pdata.productPrice) / 90),
-             (finalSalePrice = JSON.parse(pdata.productSalePrice) / 90))
-           : currencyCode === "USD"
-           ? ((finalPrice = JSON.parse(pdata.productPrice) / 73),
-             (finalSalePrice = JSON.parse(pdata.productSalePrice) / 73))
-           : currencyCode === "CAD"
-           ? ((finalPrice = JSON.parse(pdata.productPrice) / 60),
-             (finalSalePrice = JSON.parse(pdata.productSalePrice) / 60))
-           : currencyCode === "GBP"
-           ? ((finalPrice = JSON.parse(pdata.productPrice) / 103),
-             (finalSalePrice = JSON.parse(pdata.productSalePrice) / 103))
-           : null)}
-
-           price={finalPrice}
-           salePrice={finalSalePrice}
-           code={currencyCode}
+          {...(currencyCode === "EUR"
+            ? ((finalPrice = JSON.parse(pdata.productPrice) / 90),
+              (finalSalePrice = JSON.parse(pdata.productSalePrice) / 90))
+            : currencyCode === "USD"
+            ? ((finalPrice = JSON.parse(pdata.productPrice) / 73),
+              (finalSalePrice = JSON.parse(pdata.productSalePrice) / 73))
+            : currencyCode === "CAD"
+            ? ((finalPrice = JSON.parse(pdata.productPrice) / 60),
+              (finalSalePrice = JSON.parse(pdata.productSalePrice) / 60))
+            : currencyCode === "GBP"
+            ? ((finalPrice = JSON.parse(pdata.productPrice) / 103),
+              (finalSalePrice = JSON.parse(pdata.productSalePrice) / 103))
+            : null)}
+          price={finalPrice}
+          salePrice={finalSalePrice}
+          code={currencyCode}
         />
         {/* <button>Add to {wishlist ? "Wishlist" : "Cart"}</button> */}
         {this.renderStock(pdata.productStock)}
@@ -66,4 +65,5 @@ class Product extends React.Component<ProductProps> {
     );
   }
 }
+
 export default Product;

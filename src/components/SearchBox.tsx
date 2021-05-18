@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import { StoreType } from "../types";
-import SearchAction from "../store/actions/SearchAction";
+import SerachAction from "../store/actions/SearchAction";
 type Props = {
-  updateSearch: (searchField: any) => void;
+  updateSearch: (serachField: any) => void;
 };
 
 class SearchBox extends React.Component<Props> {
@@ -25,13 +25,13 @@ class SearchBox extends React.Component<Props> {
 
 const mapStateToProps = (store: StoreType) => {
   return {
-    search: store.search,
+    serach: store.search,
   };
 };
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    updateSearch: (searchField: any) =>
-      dispatch(SearchAction.updateSearch(searchField)),
+    updateSearch: (serachField: any) =>
+      dispatch(SerachAction.updateSearch(serachField)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(SearchBox);

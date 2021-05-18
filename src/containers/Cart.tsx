@@ -1,133 +1,155 @@
-import { IconButton } from "@material-ui/core";
-import { Component, Dispatch } from "react";
+import axios from "axios";
+import React from "react";
 import { connect } from "react-redux";
-import { Link, NavLink, RouteComponentProps } from "react-router-dom";
 import Column from "../components/Column";
-import ImageWithFallback from "../components/ImageWithFallback";
-import Row from "../components/Row";
 import { CartType, StoreType } from "../types";
-import formatter from "../utils/formatter";
+import { NavLink, Redirect, RouteComponentProps } from "react-router-dom";
 import Container from "../components/Container";
-import DeleteIcon from "@material-ui/icons/Delete";
-import "../index";
+import Row from "../components/Row";
+import { Dispatch } from "redux";
+import CartActions from "../store/actions/CartActions";
 
 type Props = {
-  cart: CartType[];
-  incrementQuantity: () => void;
-  decrementQuantity: () => void;
+  cartItems: CartType[];
+  deleteCartData: (id: number) => void;
+  increamentQty: (id: number) => void;
+  decrementQty: (id: number) => void;
 } & RouteComponentProps;
-
 type State = {
-  count: number;
-  deleteCartData: any;
-  quantity: any;
+  reRender: boolean;
+  totalAmo: number;
 };
 
-class Cart extends Component<Props, State> {
-  state: State = {
-    count: 0,
-    deleteCartData: this.props.cart,
-    quantity: 0,
-  };
-
-  increment = () => {
-    this.setState({
-      count: this.state.count + 1,
-    });
-  };
-
-  decrement = () => {
-    this.setState({
-      count: this.state.count -1,
-    });
-  };
-
-  deleteItem = () => {
-    console.log(this.props.cart);
-    const deleteData = this.props.cart;
-    deleteData.pop();
-    this.setState({
-      deleteCartData: deleteData,
-    });
-  };
+class Cart extends React.Component<Props, State> {
+  state: State = { reRender: false, totalAmo: 0 };
 
   render() {
+    console.log("total", this.state.totalAmo);
+    const redirecting = () => {
+      if (this.state.reRender === true) {
+        return <Redirect to="/checkout" />;
+      }
+    };
+
+    let fianlPrice: number = 0;
     return (
       <Container>
         <Row>
-          <Column size={12}>
-            <div className="jumbotron text-center">
-              <h3 className="display-5 fs-1 fw-normal">Cart Item</h3>
+
+          <h1 className="fs-3 fw-bold text-light bg-secondary text-center offset-md-3 col-md-6 shadow-lg p-2 rounded-3 mb-4">
+            CART ITEMS
+            </h1>
+
+          <Column size={8}>
+            <div className="container  shadow-lg">
+              {redirecting()}
+              <div className="items">
+                <table className="table">
+                  <tbody>
+                    {this.props.cartItems.map((data: any, index: number) =>
+                      data.productQty > 0 ? (
+                        <tr key={data.productId}>
+                          <div className="">
+                            <td>
+                              <img
+                                src={data.productImage}
+                                className="col-md-3"
+                                alt="img"
+                              />
+                            </td>
+                          </div>
+                          <th className="fw-bold display-7" scope="row">
+                            {index + 1}
+                          </th>
+                          {/* <td className=" display-7">{data.productId}</td> */}
+                          <td className="fw-bold display-7">{data.productName}</td>
+                          <td className="fw-bold display-7">
+                            S.Price {data.productSalePrice}
+                          </td>
+                          <td className="d-flex">
+                            <button
+                              className="btn btn-secondary m-1"
+                              onClick={() =>
+                                this.props.decrementQty(data.productId)
+                              }
+                            >
+                              -
+                        </button>
+                            <span className="fw-bold">{data.productQty}</span>
+                            <button
+                              className="btn btn-secondary m-1"
+                              onClick={() =>
+                                this.props.increamentQty(data.productId)
+                              }
+                            >
+                              +
+                        </button>
+                          </td>
+                          <td className="fw-bold display-7">
+                            Total {data.productSalePrice * data.productQty}
+                            <p style={{ display: "none" }}>
+                              {
+                                (fianlPrice =
+                                  fianlPrice +
+                                  data.productSalePrice * data.productQty)
+                              }
+                            </p>
+                          </td>
+
+                          <td>
+                            <div className="mt-5 pb-0 mb-1 rounded ">
+                              <button
+                                className="btn btn-secondary fw-bold"
+                                onClick={() => {
+                                  this.props.deleteCartData(data.productId);
+                                }}
+                              >
+                                <i className="fas fa-trash display-7"></i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : null
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </Column>
+          <Column size={4}>
+            <div className="card-body border  shadow-lg w-50 bg-secondary">
+              <h5 className={"totalProductPrice fw-bold"}>
+                Sub-Total : <b className="text-light"> {fianlPrice}</b>
+              </h5>
+              <h5 className="fw-bold">Tax: 00.00</h5>
+              <h5 className={"totalProductPrice fw-bold"}>
+                Total : <b className="text-light"> {fianlPrice}</b>
+              </h5>
+            </div>
+            <br />
+            <NavLink to={"/payment"}>
+              <button className="fas fa-shopping-cart bg-secondary p-3 text-light w-50 rounded-3 ">
+                CHECK OUT
+              </button>
+            </NavLink>
+            <br />
+          </Column>
         </Row>
-
-        <Row>
-          {this.props.cart.map((val) => (
-            <Column
-              size={8}
-              classes={
-                "d-flex justify-content-between align-items-center mt-1 shadow-lg ms-4 h-75 w-50 mb-3"
-              }
-            >
-              <Link to={`/productdetail/${val.productId}`}>
-                <ImageWithFallback
-                  source={val.productImage}
-                  classes={"w-75 h-75 img-thumbnail rounded float-start"}
-                />
-              </Link>
-              <div className="d-flex align-items-start flex-column">
-                <h5 className={"mt-4"}>
-                  {formatter.titlecase(val.productName)}
-                </h5>
-                <p className="mt-2 text-dark ">
-                  SalePrice: {val.productSalePrice}
-                </p>
-                <p className="mt-2 text-danger">Stock: {val.productStock}</p>
-                <p className="mt-2 text-success">Price: {val.productPrice}</p>
-              </div>
-              <div className="btn d-flex align-items-start flex-column">
-                <div className="d-flex mb-5">
-                  <button
-                    className="btn btn-primary m-2"
-                    onClick={this.decrement}
-                  >
-                    -
-                  </button>
-                  <h3>{this.state.count}</h3>
-                  <button
-                    className="btn btn-danger m-2"
-                    onClick={this.increment}
-                  >
-                    +
-                  </button>
-                </div>
-                <button className="btn btn-danger p-1">
-                  <DeleteIcon
-                    className="btn-danger"
-                    onClick={this.deleteItem}
-                  />
-                </button>
-              </div>
-            </Column>
-          ))}
-        </Row>
-        <NavLink to={"/checkout"}>
-          <div className="d-grid">
-            <button className="btn btn-primary btn-lg" type="button">
-              Proceed To CheckOut
-            </button>
-          </div>
-        </NavLink>
       </Container>
     );
   }
 }
 
-const mapStateToProps = (state: StoreType) => {
+const mapStoreToProps = (state: StoreType) => {
   return {
-    cart: state.cart,
+    cartItems: state.cart,
   };
 };
-
-export default connect(mapStateToProps)(Cart);
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    deleteCartData: (id: number) => dispatch(CartActions.removeItem(id)),
+    increamentQty: (id: number) => dispatch(CartActions.increaseQty(id)),
+    decrementQty: (id: number) => dispatch(CartActions.decrementQty(id)),
+  };
+};
+export default connect(mapStoreToProps, mapDispatchToProps)(Cart);

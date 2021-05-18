@@ -2,7 +2,7 @@ import axios from "axios";
 import constants from "../constants";
 import { ProductResponseType, ProductType } from "../types";
 
-const getProducts = (page = 1,
+const getProducts = ( page = 1,
   minPrice: any,
   maxPrice: any,
   searchByTerm: any,

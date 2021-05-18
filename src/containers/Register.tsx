@@ -36,10 +36,12 @@ class Register extends React.Component<RegisterProps, RegisterState> {
     try {
       e.preventDefault();
       console.log(e);
+
       const { email, password, name } = this.state;
       const { data } = await UserService.register(email, password, name);
       console.log(data);
-      this.setState({ returnName: data.userName });
+      this.props.history.push("/login");
+      this.setState({ returnName: data.name });
     } catch (e) {
       this.setState({ errorMessage: e.message });
     }
@@ -78,11 +80,8 @@ class Register extends React.Component<RegisterProps, RegisterState> {
                 type={"password"}
                 textChange={(password) => this.setState({ password })}
               />
-             
 
-              <button className={"btn btn-success w-100 text-uppercase"}>
-                Register
-              </button>
+              <button className={"btn btn-success w-100"}>REGISTER</button>
             </form>
           </Column>
         </Row>

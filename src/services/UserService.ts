@@ -10,6 +10,13 @@ const login = (email: string, password: string) => {
     .catch((e) => Promise.reject(e.response.data));
 };
 
+const register = (email: string, password: string, name:string) => {
+  const url = `${constants.BASE_URL}/auth/register`;
+  return axios
+    .post<RegisterResponseType>(url, { email, password, name })
+    .catch((e) => Promise.reject(e.response.data));
+};
+
 const profile = () => {
   const url = `${constants.BASE_URL}/auth/profile`;
   return StorageService.getData("token").then((token) =>
@@ -19,11 +26,25 @@ const profile = () => {
   );
 };
 
-const register = (email: string, password: string, name:string) => {
-  const url = `${constants.BASE_URL}/auth/register`;
-  return axios
-    .post<RegisterResponseType>(url, { email, password, name })
-    .catch((e) => Promise.reject(e.response.data));
+const address = () => {
+  const url = `${ constants.BASE_URL }/address`;
+  return StorageService.getData("token").then((token)=> 
+    axios.get( url, {
+    headers: {Authorization: `Bearer ${token}` },
+  })
+  )
+}
+
+
+const addressPost = (line1: string, line2: string, city: string, state: string, pincode: string) => {
+  const url = `${constants.BASE_URL}/address`;
+  return StorageService.getData("token").then((token) =>
+    axios.post(url, { line1, line2, city, state, pincode }, {
+      headers: { Authorization: `Bearer ${token}`, },
+    })
+  );
 };
 
-export default { login, profile, register };
+
+
+export default { login, profile, register, address, addressPost};

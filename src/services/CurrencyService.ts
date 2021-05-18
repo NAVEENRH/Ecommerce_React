@@ -7,4 +7,4 @@ const getExchangeRate = () => {
   return axios.get(url);
 };
 
-export default { getExchangeRate};
+export default { getExchangeRate };

@@ -1,9 +1,12 @@
 export type StoreType = {
+   
   currency: string;
   cart: CartType[];
+  productDetail: ProductType[];
   userSession: UserSessionType;
   loading: boolean;
-  search: string;
+  search: any;
+  
 };
 
 export type ProductType = {
@@ -29,7 +32,6 @@ export type MenuType = {
 
 export type CartType = {
   productQty: number;
-  productStock: number
 } & ProductType;
 
 export type LoginResponseType = {
@@ -37,13 +39,14 @@ export type LoginResponseType = {
   expiresIn: number;
   access_token: string;
 };
+export type RegisterResponseType = {
+  name: string;
+  email: string;
+}
 
 export type UserSessionType = {
   user: object | null;
   error: string | null;
 };
 
-export type RegisterResponseType = {
-  userName: any;
-  userEmail: any;
-}
+

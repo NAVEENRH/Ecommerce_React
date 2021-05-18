@@ -1,7 +1,7 @@
 import React, { SyntheticEvent } from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router";
-import { Link, Redirect } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import { Dispatch } from "redux";
 import Column from "../components/Column";
 import LoadingWrapper from "../components/LoadingWrapper";
@@ -13,7 +13,6 @@ import LoadingActions from "../store/actions/LoadingActions";
 import UserActions from "../store/actions/UserActions";
 import { StoreType } from "../types";
 import formatter from "../utils/formatter";
-
 type LoginProps = {
   signinSuccess: (user: object) => void;
   signinError: (error: string) => void;
@@ -24,9 +23,7 @@ type LoginProps = {
 } & RouteComponentProps;
 type LoginState = { email: string; password: string };
 class Login extends React.Component<LoginProps, LoginState> {
-
   state: LoginState = { email: "", password: "" };
-
   login = async (e: SyntheticEvent) => {
     try {
       e.preventDefault();
@@ -41,7 +38,6 @@ class Login extends React.Component<LoginProps, LoginState> {
       this.props.hideLoader();
     }
   };
-  
   render() {
     if (this.props.isAuthenticated) {
       let lastPage = "/"; // by default home page
@@ -51,7 +47,6 @@ class Login extends React.Component<LoginProps, LoginState> {
       }
       return <Redirect to={lastPage} />;
     }
-
     return (
       <LoadingWrapper>
         <Row>
@@ -78,9 +73,7 @@ class Login extends React.Component<LoginProps, LoginState> {
               <button className={"btn btn-success w-100 text-uppercase"}>
                 Login
               </button>
-              <Link to={"/register"} >
-                <h6 className="m-3 p-1">Register</h6>
-              </Link>
+              <NavLink to={"/register"}>Register</NavLink>
             </form>
           </Column>
         </Row>
@@ -88,7 +81,6 @@ class Login extends React.Component<LoginProps, LoginState> {
     );
   }
 }
-
 const mapStoreDataToProps = (storeData: StoreType) => {
   return {
     isAuthenticated: !!storeData.userSession.user, // converting to boolean

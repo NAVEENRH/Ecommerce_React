@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-type Props = { source: string; classes?: string };
+type Props = { source: string; classes: string };
 
 const ImageWithFallback: React.FC<Props> = ({ source, classes }) => {
   let [imgSrc, setDefault] = useState(source);
@@ -12,7 +12,7 @@ const ImageWithFallback: React.FC<Props> = ({ source, classes }) => {
           "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png"
         )
       }
-      className={classes}
+      className="{classes} img-thumbnail"
     />
   );
 };

@@ -1,79 +1,80 @@
 import React from "react";
+import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import Column from "../components/Column";
 import ErrorBoundary from "../components/ErrorBoundary";
+import ImageWithFallback from "../components/ImageWithFallback";
 import Row from "../components/Row";
 import ProductService from "../services/ProductService";
-import { ProductType } from "../types";
-import "../index"
+import { CartType, ProductType, StoreType } from "../types";
 
-type ProductProps = {
-  pdata: ProductType;
-  wishlist?: boolean;
-  currencyCode: string;
-  btnClick: () => void;
-};
+type Props = {
+  cart: CartType[];
+  count: number;
+} & RouteComponentProps;
 type State = {
-  productList: any,
-}
-
-class ProductDetail extends React.Component<RouteComponentProps> {
-  state: State = { productList: [] };
-
-  async componentDidMount() {
+  orderData: ProductType[];
+};
+class ProductDetail extends React.Component<Props, State, RouteComponentProps> {
+  state: State = {
+    orderData: [],
+  };
+  async componentDidMount(): Promise<void> {
     try {
       const params: any = this.props.match.params;
       const { data } = await ProductService.getProductById(params.id);
+
       console.log("success", data);
       this.setState({
-        productList: data
-      })
+        orderData: [data],
+      });
     } catch (e) {
       console.log("error", e);
     }
   }
-
-
   render() {
     return (
       <ErrorBoundary>
         <Row>
-          <Column size={6}
-            classes="offset-md-3">
-            <div className="card-title shadow-lg p-2 rounded-pill">
-              <h1 className="text-primary text-center">Product Detail</h1>
-            </div>
-          </Column>
-
-          <Column size={8}
-            classes="offset-md-2 mt-4">
-            <div>
-              <img src={this.state.productList.productImage} className="img-thumbnail float-start product-image" />
-
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                <h3 className="text-info">Name :</h3>
-                <h4>{this.state.productList.productName}</h4>
-              </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                <h3 className="text-info">Price :</h3>
-                <h4>{this.state.productList.productPrice}</h4>
-              </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                <h3 className="text-info">SalePrice :</h3>
-                <h4>{this.state.productList.productS}</h4>
-              </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                <h3 className="text-info">Stock :</h3>
-                <h4>{this.state.productList.productStock}</h4>
-              </li>
-
-            </div>
-          </Column>
-
+          <div className="header fs-3 fw-bold bg-dark text-light col-6 offset-3 text-center">Product Details</div>
+          {this.state.orderData.map((val) => (
+            <Column
+              size={9}
+              classes="offset-md-1 mt-5 d-flex text-left align-items-center shadow-lg border border-3 fw-bold fs-3"
+            >
+              <ImageWithFallback
+                source={val.productImage}
+                classes={"img-thumbnail"}
+              />
+              <div className="ms-4">
+                <h4 className="mb-5">
+                  ProductName :
+                  <span className="text-info">{val.productName}</span>
+                </h4>
+                <h4 className="bd-highlight mt-2 mb-5">
+                  ProductPrice :
+                  <span className="text-info">{val.productPrice}</span>
+                </h4>
+                <h4 className="mt-2 mb-5">
+                  ProductSalePrice :
+                  <span className="text-info">{val.productSalePrice}</span>
+                </h4>
+                <h4 className="mt-2">
+                  ProductStock :{" "}
+                  <span className="text-info">{val.productStock}</span>
+                </h4>
+              </div>
+            </Column>
+          ))}
         </Row>
       </ErrorBoundary>
     );
   }
 }
+const mapStateToProps = (state: StoreType) => {
+  return {
+    cart: state.cart,
+  };
+};
 
-export default ProductDetail;
+export default connect(mapStateToProps)(ProductDetail);

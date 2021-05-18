@@ -1,34 +1,34 @@
 import { CartType, ProductType } from "../../types";
 import { Action } from "redux";
 import CartActions from "../actions/CartActions";
-
 type IAction = {
   product: ProductType;
   id: number;
-  qtyId:number;
+  qtyId: number;
 } & Action;
+
 // state : initialise, immutable
 function cartReducer(store: CartType[] = [], action: IAction) {
   switch (action.type) {
     case CartActions.ActionTypes.ADD_TO_CART:
       return [...store, { ...action.product, productQty: 1 }];
     case CartActions.ActionTypes.REMOVE_ITEM:
-      return store.filter((prod) => prod.productId !== action.id);
+      return store.filter((order) => order.productId !== action.id);
 
         case CartActions.ActionTypes.INCREAMENT:
-      return (store.map((prod) => {
-        if (prod.productId === action.qtyId) {
-          prod.productQty++
+      return (store.map((order) => {
+        if (order.productId === action.qtyId) {
+          order.productQty++
         }
-        return prod
+        return order
       }));
 
     case CartActions.ActionTypes.DECREMENT:
-      return (store.map((prod) => {
-        if (prod.productId === action.id) {
-          prod.productQty--
+      return (store.map((order) => {
+        if (order.productId === action.id) {
+          order.productQty--
         }
-        return prod
+        return order
       }));
     default:
       return store;
