@@ -1,21 +1,29 @@
 import axios from "axios";
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { Redirect, Route, RouteComponentProps } from "react-router";
 import Column from "../components/Column";
 import Container from "../components/Container";
 import ImageWithFallback from "../components/ImageWithFallback";
 import Row from "../components/Row";
 import StorageService from "../services/StorageService";
 import UserService from "../services/UserService";
+import ProfileUpload from "../components/ProfileUpload";
 import "../index"
-type Props = {};
+import IconButton from '@material-ui/core/IconButton';
+
+
+type Props = {uploadClick: () => void } & RouteComponentProps;
 type State = {
   profileData: any;
   address: any;
   delAddress: any;
+  userProfileImage: string;
+  profileImage: any;
+  // hide: boolean;
 };
 class Profile extends React.Component<Props, State> {
-  state: State = { profileData: [], address: [], delAddress: [] };
+  state: State = { profileData: [], address: [], delAddress: [], userProfileImage: "", profileImage: "", };
 
   async componentDidMount() {
     try {
@@ -31,8 +39,29 @@ class Profile extends React.Component<Props, State> {
   async getData() {
     const { data } = await UserService.profile();
     this.setState({
-      address: data.address,
+      // hide: true,
     });
+    this.setState({
+      address: data.address,
+      userProfileImage: data.profileImage,
+    });
+
+    axios
+    .get(
+      `http://localhost:5000/auth/profileImage/${this.state.userProfileImage}`
+    )
+    .then(
+      (response) => (
+        console.log(response.status === 200, "getting"),
+        // history.state("/login")
+        console.log(response),
+        this.setState({
+          profileImage: response.request.responseURL,
+        }),
+        console.log(this.state.profileImage)
+      )
+    );
+
   }
   render() {
     console.log(this.state.address);
@@ -52,6 +81,13 @@ class Profile extends React.Component<Props, State> {
           .catch((err) => console.log(err))
       );
     };
+
+    // iconClicked = () => {
+    //   this.setState({
+    //     hide: false,
+    //   });
+    // };
+
     return (
       <Container>
         <Row>
@@ -59,6 +95,24 @@ class Profile extends React.Component<Props, State> {
             <div className="header text-center border shadow-md">
               User Details
             </div>
+            <div className="profileImage" id="profileImage">
+                <IconButton>
+                <img
+                  src={this.state.profileImage}
+                  alt="Profile Image"
+                  className="img-thumbnail"
+                  width="200px"
+                />
+                </IconButton>
+
+                <i
+                  className="fas fa-upload text-dark"
+                  // onClick={this.iconClicked}
+                ></i>
+                {/* {this.state.hide ? null : (
+                  <ProfileUpload getData={this.getData} />
+                )} */}
+              </div>
             <div className="flex ">
               <div className="imgfallback ">
                 <ImageWithFallback
